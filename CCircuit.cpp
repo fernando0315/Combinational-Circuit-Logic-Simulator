@@ -67,22 +67,36 @@ void CCircuit::addGate(Gate gType, string gateName, vector<string> inputPtr)
 			newNode->input.push_back(&cktInput[i]);
 		}
 	}
-	cktOutput[gateName] = &(newNode->output);
+	//cktOutput[gateName] = &(newNode->output);
+	newNode->id = gateName;
 	gatesPtr[to_string(numOfGateDefined++)] = newNode;
 }
 
 void CCircuit::printTruthTable()
 {
 	int inputSize = cktInput.size();
+	int counter = 0;
 	int maxValue = (int)pow(2, inputSize);
 
 	for (map<string, bool>::iterator it = cktInput.begin(); it != cktInput.end(); it++)
 		cout << it->first << '\t';
 	cout << '|' << '\t';
-	for (map<string, bool*>::iterator it = cktOutput.begin(); it != cktOutput.end(); it++)
+	/*for (map<string, bool*>::iterator it = cktOutput.begin(); it != cktOutput.end(); it++)
 		cout << it->first << '\t';
+	*/
+	for (unordered_map<string, node*>::iterator it = gatesPtr.begin(); it != gatesPtr.end(); it++)
+		if (it->second->lastOutput)
+		{
+			cout << it->second->id << '\t';
+			counter++;
+		}
 	cout << endl;
-	cout << "--------------------------------|-----------------------------\n";
+	for (int i = 0; i < inputSize; i++)
+		cout << "--------";
+	cout << "|-------";
+	for (int i = 0; i < counter; i++)
+		cout << "--------";
+	cout << endl;
 
 	for (int i = 0; i < maxValue; i++)
 	{
@@ -98,10 +112,12 @@ void CCircuit::printTruthTable()
 			cout << it->second << '\t';
 
 		cout << "|\t";
-
+		/*
 		for (map<string, bool*>::iterator it = cktOutput.begin(); it != cktOutput.end(); it++)
-			cout << *(it->second) << '\t';
-
+			cout << *(it->second) << '\t';*/
+		for (unordered_map<string, node*>::iterator it = gatesPtr.begin(); it != gatesPtr.end(); it++)
+			if (it->second->lastOutput)
+				cout << it->second->output << '\t';
 		cout << endl;
 	}
 }
